@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
 
     const jobCollection = client.db('jobSearchDb').collection('allJobs');
+    const userCollection = client.db('jobSearchDb').collection('users');
 
     app.get('/jobs', async (req, res) => {
         const cursor = jobCollection.find();
@@ -37,6 +38,28 @@ async function run() {
         const jobId = req.params.id;
         const query = {_id: new ObjectId(jobId)};
         const result = await jobCollection.findOne(query);
+        res.send(result);
+      })
+
+      app.post('/addJob', async (req, res) => {
+        const newJob = req.body;
+        console.log(newJob);
+        const result = await jobCollection.insertOne(newJob);
+        res.send(result);
+      })
+
+      app.post('/addUser', async (req, res) => {
+        const newUser = req.body;
+        console.log(newUser);
+        const result = await userCollection.insertOne(newUser);
+        res.send(result);
+      })
+
+      app.delete('/deleteJob/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await jobCollection.deleteOne(query);
+        console.log(result);
         res.send(result);
       })
 
